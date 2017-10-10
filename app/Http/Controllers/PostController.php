@@ -81,10 +81,12 @@ class PostController extends Controller
         //
         $post_id = $request->input('post_id');
         $post = Posts::find($post_id);
+
         if ($post && ($post->author_id == $request->user()->id || $request->user()->is_admin())) {
             $title = $request->input('title');
             $sumary = $request->input('sumary');
             $slug = str_slug($title);
+            $active = $request->input('active');
             $duplicate = Posts::where('slug', $slug)->first();
             if ($duplicate) {
                 if ($duplicate->id != $post_id) {
@@ -93,23 +95,23 @@ class PostController extends Controller
                     $post->slug = $slug;
                 }
             }
+            $post->active = ($active)? "1": "0";
             $post->title = $title;
             $post->sumary = $sumary;
             $post->body = $request->input('body');
+
             if ($request->has('save')) {
-                $post->active = 0;
                 $message = 'Post saved successfully';
                 $landing = '/my-all-posts';
             } else {
-                $post->active = 1;
                 $message = 'Post updated successfully';
                 //$landing = $post->slug;
                 $landing = '/my-all-posts';
             }
             $post->save();
-            return redirect($landing)->withMessage($message);
+            return redirect($landing)->with(['message'=> $message, 'status' => 'success']);
         } else {
-            return redirect('/')->withErrors('you have not sufficient permissions');
+            return redirect('/')->with('message', 'you have not sufficient permissions');
         }
     }
 
