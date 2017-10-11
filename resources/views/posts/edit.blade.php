@@ -28,12 +28,22 @@
                     {!! old('body') !!}
                 </textarea>
                 </div>
+<div class="field">
+@if($post->active == '1')
+    <input id="active" type="checkbox" name="active" class="switch" checked="checked">
+@else
+    <input id="active" type="checkbox" name="active" class="switch">
+@endif
+  <label for="active">Switch example</label>
+</div>
+<div class="botoes">
                 @if($post->active == '1')
                     <input type="submit" name='publish' class="btn btn-success" value = "Update"/>
                 @else
                     <input type="submit" name='publish' class="btn btn-success" value = "Publish"/>
                 @endif
                 <a href="{{  url('delete/'.$post->id.'?_token='.csrf_token()) }}" class="btn btn-danger">Delete</a>
+</div>
             </form>
         </div>
     </div>        
